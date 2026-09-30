@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quiz Avid Attic — Media Composer</title>
+<style>
+:root{--bg:#0f1220;--card:#1a1e33;--text:#eef0ff;--muted:#9aa0c3;--accent:#6c8cff;--good:#3ecf8e;--bad:#ff5d6c;--border:#2b3050;--btn:#12162a;--tint:rgba(255,255,255,.04)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f5f6fb;--card:#fff;--text:#12162a;--muted:#666c8c;--accent:#4a6bff;--border:#e1e3f0;--btn:#f7f8fc;--tint:rgba(18,22,42,.035)}}
+:root[data-theme="light"]{--bg:#f5f6fb;--card:#fff;--text:#12162a;--muted:#666c8c;--accent:#4a6bff;--border:#e1e3f0;--btn:#f7f8fc;--tint:rgba(18,22,42,.035)}
+:root[data-theme="dark"]{--bg:#0f1220;--card:#1a1e33;--text:#eef0ff;--muted:#9aa0c3;--accent:#6c8cff;--border:#2b3050;--btn:#12162a;--tint:rgba(255,255,255,.04)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+.wrap{max-width:820px;margin:0 auto;padding:26px 18px 50px}
+h1{font-size:1.3rem;margin:0 0 4px}
+.sub{color:var(--muted);font-size:.85rem;margin-bottom:16px}
+.top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.top button,.nav button,.mbtn{padding:9px 13px;border-radius:9px;border:1px solid var(--border);background:var(--btn);color:var(--text);cursor:pointer;font-size:.9rem}
+.top button:hover,.nav button:not(:disabled):hover,.mbtn:hover{border-color:var(--accent)}
+.stat{margin-left:auto;font-size:.85rem;color:var(--muted)}
+.bar{height:6px;background:var(--border);border-radius:9px;overflow:hidden;margin-bottom:14px}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px}
+.tag{display:inline-block;text-transform:uppercase;letter-spacing:.06em;font-size:.7rem;font-weight:700;color:#fff;background:var(--accent);padding:3px 10px;border-radius:99px;margin-bottom:10px}
+.qn{color:var(--accent);font-weight:600;font-size:.85rem;margin-bottom:8px}
+.qt{font-size:1.1rem;line-height:1.4;margin-bottom:16px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;gap:10px;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--btn);cursor:pointer;font-size:.95rem;line-height:1.35;text-align:left;color:var(--text);width:100%;font-family:inherit}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt b{color:var(--muted);min-width:18px}
+.opt.ok{background:rgba(62,207,142,.15);border-color:var(--good)}
+.opt.ko{background:rgba(255,93,108,.15);border-color:var(--bad);animation:sh .4s}
+.opt:disabled{cursor:default}
+@keyframes sh{25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
+.fb{margin-top:14px;font-weight:600}
+.fb.g{color:var(--good)}.fb.b{color:var(--bad)}
+.ex{margin-top:8px;font-size:.87rem;color:var(--muted);line-height:1.5;background:var(--tint);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+.nav{display:flex;gap:10px;margin-top:18px}
+.nav button{flex:1;padding:12px}.nav button:disabled{opacity:.35;cursor:default}
+.dots{display:flex;flex-wrap:wrap;gap:5px;margin-top:16px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--border);cursor:pointer}
+.dot.g{background:var(--good)}.dot.b{background:var(--bad)}.dot.cur{outline:2px solid var(--accent);outline-offset:1px}
+.end{text-align:center;padding:10px 0}
+.big{font-size:2.6rem;font-weight:800;color:var(--accent)}
+.mbtn.p{background:var(--accent);border-color:var(--accent);color:#fff;margin-top:14px}
+.hint{font-size:.75rem;color:var(--muted);margin-top:14px;text-align:center}
+kbd{background:var(--btn);border:1px solid var(--border);border-radius:4px;padding:1px 6px}
+.opt.foc:not(:disabled){border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+.txt{display:flex;gap:8px}.txt input{flex:1;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--btn);color:var(--text);font-size:1rem;font-family:inherit}
+.txt input:focus{outline:none;border-color:var(--accent)}
+.txt input.ok{border-color:var(--good);background:rgba(62,207,142,.15)}.txt input.ko{border-color:var(--bad);background:rgba(255,93,108,.15)}
+.les h2{font-size:1.15rem;margin:0 0 10px}.les h3{font-size:.95rem;color:var(--accent);margin:18px 0 6px}
+.les p,.les li{font-size:.9rem;line-height:1.6}.les ol,.les ul{padding-left:20px;margin:6px 0}
+.les code{background:var(--tint);border:1px solid var(--border);border-radius:5px;padding:1px 6px;font-size:.82rem;word-break:break-all}
+.note{background:var(--tint);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;padding:10px 12px;margin:10px 0;font-size:.87rem;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎬 Quiz Avid Attic</h1>
+  <div class="sub">Media Composer — retrouver ses sauvegardes automatiques de bins</div>
+  <div class="top">
+    <button id="rst">↺ Recommencer</button>
+    <button id="shf">🔀 Mélanger</button>
+    <button id="les">📖 Leçon</button>
+    <button id="thm">🌙</button>
+    <div class="stat" id="stat">✓ 0 / 0</div>
+  </div>
+  <div class="bar"><i id="pb"></i></div>
+  <div class="card" id="card"></div>
+  <div class="dots" id="dots"></div>
+  <div class="hint">Raccourcis : <kbd>A</kbd>–<kbd>E</kbd> ou <kbd>1</kbd>–<kbd>5</kbd> pour répondre · <kbd>↑</kbd> <kbd>↓</kbd> pour choisir, <kbd>Espace</kbd> pour valider · <kbd>←</kbd> <kbd>→</kbd> pour naviguer</div>
+</div>
+<script>
+const Q=[
+{s:"Emplacement",q:"Sous Windows, où se trouve le dossier Avid Attic ?",o:["C:/Program Files/Avid/Attic","drive:/Users/Public/Public Documents/Avid editing application","drive:/Users/Nom/Documents/Avid Projects","drive:/Windows/Temp/Avid"],c:1,e:"Sous Windows, l'Attic se trouve dans Users/Public/Public Documents/Avid editing application."},
+{s:"Emplacement",q:"Sous Mac, quel est le chemin du dossier Avid Attic ?",o:["Macintosh HD/Applications/Avid Attic","Macintosh HD/Users/Shared/Avid editing application/Avid Attic","Macintosh HD/Bibliothèque/Avid/Attic","Macintosh HD/Users/Bureau/Attic"],c:1,e:"Sur Mac : Macintosh HD/Users/Shared/Avid editing application/Avid Attic."},
+{s:"Procédure",q:"Quelle est la toute première étape pour récupérer un fichier depuis l'Attic ?",o:["Fermer définitivement le projet","Supprimer le bin actuel","Redémarrer l'ordinateur","Réduire (minimiser) l'application Avid"],c:3,e:"On commence par minimiser l'application Avid, puis on ouvre le dossier Avid Attic depuis le bureau."},
+{s:"Structure",q:"À l'ouverture du dossier Avid Attic, que voit-on ?",o:["Un dossier pour chaque projet","Un dossier pour chaque média importé","Un seul fichier de sauvegarde global","Un dossier pour chaque date"],c:0,e:"L'Attic affiche un dossier par projet."},
+{s:"Structure",q:"Une fois dans le dossier d'un projet, quel dossier faut-il ouvrir pour trouver les sauvegardes de bins ?",o:["Sequences","Bins","Media Files","Settings"],c:1,e:"On ouvre le dossier du projet, puis le dossier Bins, qui contient un dossier par bin du projet."},
+{s:"Sauvegardes",q:"Comment est nommé un fichier de sauvegarde d'un bin appelé « Source Clips » ?",o:["Source Clips.1, Source Clips.2…","Backup_Source Clips","Source Clips_copie","SourceClips.bak"],c:0,e:"Un fichier de sauvegarde porte le même nom que le bin, avec un numéro ajouté (Source Clips.1, Source Clips.2…)."},
+{s:"Sauvegardes",q:"Comment afficher les dates de création des fichiers de sauvegarde dans le dossier d'un bin ?",o:["Clic droit > Propriétés","View > Details","Edit > Sort","Fichier > Historique"],c:1,e:"Si le dossier n'est pas déjà en mode Détails, on choisit View > Details pour voir les dates de création."},
+{s:"Récupération",q:"Que fait Ctrl+glisser un fichier de sauvegarde vers le bureau ?",o:["Il déplace le fichier et vide l'Attic","Il supprime le fichier de l'Attic","Il copie le fichier et laisse l'original dans l'Attic","Il ouvre directement le bin dans Avid"],c:2,e:"Ctrl+glisser fait une copie : les fichiers originaux restent dans l'Attic."},
+{s:"Récupération",q:"Vers quel emplacement copie-t-on les fichiers de sauvegarde dans la procédure ?",o:["La corbeille","Le dossier des médias","Le bureau","Le dossier Projet Avid"],c:2,e:"On copie les bins de sauvegarde sur le bureau, puis on les ouvre depuis Avid."},
+{s:"Réouverture",q:"Dans la fenêtre Projet, quel onglet faut-il activer pour ouvrir un bin de sauvegarde ?",o:["Settings","Usage","Bins","Format"],c:2,e:"On clique sur la fenêtre Projet, puis sur l'onglet Bins, avant de choisir File > Open Bin."},
+{s:"Réouverture",q:"Dans la boîte de dialogue d'ouverture, quel type de fichier faut-il sélectionner (Files of Type) ?",o:["Avid Bins (*.avb)","All Files (*.*)","Sequences only","Media (*.mxf)"],c:1,e:"Les fichiers de sauvegarde ont un numéro ajouté à leur nom : il faut choisir All Files (*.*) pour les voir."},
+{s:"Réouverture",q:"Quand on ouvre un bin de sauvegarde, où Avid crée-t-il un lien vers ce bin ?",o:["Dans le dossier Attic","Dans le dossier Other Bins","Dans le dossier Trash","Dans la timeline"],c:1,e:"Un lien vers le bin de sauvegarde situé sur le bureau est créé dans le dossier Other Bins."},
+{s:"Règle d'or",q:"Peut-on ouvrir en même temps un bin et sa copie de sauvegarde ?",o:["Oui, sans limite","Oui, mais seulement sur Mac","Non : il faut garder les autres bins fermés et ouvrir les sauvegardes une par une","Oui, si le bin est vide"],c:2,e:"Avid n'autorise pas l'ouverture simultanée d'un bin et de sa copie."},
+{s:"Récupération",q:"Une fois le bin de sauvegarde ouvert, que faire pour conserver son contenu ?",o:["L'enregistrer sous le même nom que l'original","Créer un nouveau bin (ex. « Audio New ») et y glisser le contenu voulu","Copier-coller tout le dossier Attic","Renommer le projet"],c:1,e:"On crée un nouveau bin (par exemple Audio New pour Audio.2) et on y glisse le matériel à garder."},
+{s:"Nettoyage",q:"Que fait-on à la fin, une fois le contenu récupéré ?",o:["On laisse tout tel quel","On supprime les bins de sauvegarde dans Other Bins, puis on jette les fichiers du bureau à la corbeille","On vide tout le dossier Attic","On réinstalle Avid"],c:1,e:"On sélectionne et supprime les bins de sauvegarde dans Other Bins, puis on glisse les fichiers du bureau à la corbeille."}
+];
+const OPT=[
+["drive:/Users/Public/Public Documents/Avid editing application","drive:/Users/Public/Shared Documents/Avid Attic Backup","C:/Program Files/Avid/Avid editing application/Attic","drive:/ProgramData/Avid/Avid editing application","drive:/Users/Nom/Documents/Avid Projects/Attic"],
+["Macintosh HD/Users/Shared/Avid editing application/Avid Attic","Macintosh HD/Applications/Avid editing application/Avid Attic","Macintosh HD/Bibliothèque/Avid editing application/Avid Attic","Macintosh HD/Users/Nom/Bureau/Avid editing application/Attic","Macintosh HD/Users/Nom/Films/Avid Attic"],
+["Minimiser l'application Avid","Fermer définitivement le projet en cours","Supprimer le bin actuellement ouvert","Redémarrer complètement l'ordinateur","Ouvrir directement la timeline Avid"],
+["Un dossier pour chaque projet","Un dossier pour chaque média importé","Un seul fichier de sauvegarde global","Un dossier pour chaque date","Un dossier pour chaque séquence"],
+["Bins","Sequences","Settings","Archive","Backups"],
+["Source Clips.1, Source Clips.2, …","Backup_Source Clips_1, Backup_Source Clips_2","Source Clips_copie, Source Clips_copie2","SourceClips.bak, SourceClips.bak2","Source Clips_v1.avb, Source Clips_v2.avb"],
+["View > Details","Clic droit > Propriétés","Edit > Sort by Date","Fichier > Historique","Tools > Console"],
+["Il copie le fichier, l'original reste en place","Il déplace le fichier et supprime l'original","Il supprime définitivement le fichier de l'Attic","Il ouvre aussitôt le bin directement dans Avid","Il renomme le fichier en ajoutant un numéro"],
+["Le bureau de l'ordinateur","La corbeille du système","Le dossier des médias Avid","Le dossier du projet Avid","Un disque réseau partagé"],
+["Bins","Info","Usage","Format","Settings"],
+["All Files (*.*)","Avid Bins (*.avb)","Sequences only","Media (*.mxf)","Bin Backup (*.bak)"],
+["Dans le dossier Other Bins","Dans le dossier Attic du projet","Dans le dossier Trash du projet","Dans la timeline de la séquence","Dans le dossier Media Files"],
+["Un seul à la fois, les autres bins restant fermés","Tous en même temps pour les comparer","Le bin original et sa copie ensemble","Uniquement après avoir supprimé l'original","Uniquement après avoir fermé le projet"],
+["Créer un nouveau bin et y glisser le contenu voulu","L'enregistrer sous le même nom que l'original","Copier-coller tout le contenu du dossier Attic","Renommer le projet puis relancer l'application","Renommer la sauvegarde et la remplacer dans l'Attic"],
+["Effacer les bins de Other Bins et les fichiers du bureau","Laisser tous les fichiers en place pour garder une trace","Vider entièrement le dossier Attic de tous les projets","Réinstaller Avid pour repartir sur une base propre","Renommer les sauvegardes et les remettre dans l'Attic"]];
+OPT[0]=["drive:/Users/Public/Public Documents/Avid editing application","drive:/Users/Public/Shared Documents/Avid editing application","C:/Program Files/Avid/Avid editing application/Avid Attic","drive:/ProgramData/Avid/Avid editing application/Attic","drive:/Users/Nom/Documents/Avid Projects/Avid Attic Backup"];
+OPT[1][4]="Macintosh HD/Users/Nom/Films/Avid editing application/Attic";
+OPT[2][0]="Minimiser l'application Avid ouverte";
+OPT[4]=["Bins","Clips","Audio","Titles","Media"];
+OPT[5]=["Source Clips.1, Source Clips.2, Source Clips.3","Backup_Source Clips_1, Backup_Source Clips_2, …","Source Clips_copie, Source Clips_copie2, …","SourceClips.bak, SourceClips.bak2, SourceClips.bak3","Source Clips_v1.avb, Source Clips_v2.avb"];
+OPT[6]=["View > Details","Edit > Sort","Tools > Info","Clic droit > Infos","Fichier > Détails"];
+OPT[11][1]="Dans le dossier Attic";
+OPT[12]=["Un seul à la fois, les autres restant fermés","Tous en même temps pour pouvoir les comparer","Le bin original et sa copie ensemble à l'écran","Uniquement après avoir supprimé le bin original","Uniquement après avoir fermé tout le projet"];
+Q.forEach((x,i)=>{x.o=OPT[i];x.c=0});
+Q[12].q="Comment doit-on ouvrir les bins de sauvegarde dans Avid ?";
+Q[12].e="Avid n'autorise pas l'ouverture simultanée d'un bin et de sa copie : garde les autres bins fermés et ouvre les sauvegardes une à la fois.";
+[["Écris le nom du dossier qui contient un dossier par projet (dans le dossier Avid editing application).",["avid attic","attic"],"Avid Attic"],
+["Un bin s'appelle « Audio ». Comment s'appelle sa première sauvegarde dans l'Attic ?",["audio.1","audio 1"],"Audio.1"],
+["Quel menu et quelle commande affichent les dates de création des sauvegardes ? (format Menu > Commande)",["view details"],"View > Details"],
+["Dans quel dossier Avid crée-t-il le lien vers un bin de sauvegarde ouvert ?",["other bins","other bin"],"Other Bins"],
+["Quelle commande du menu File sert à ouvrir un bin de sauvegarde ?",["open bin","file open bin"],"Open Bin"],
+["Quel type de fichier faut-il choisir dans « Files of Type » pour voir les sauvegardes ?",["all files","all files *.*","*.*"],"All Files (*.*)"],
+["Quelle touche maintient-on en glissant les fichiers vers le bureau pour en faire une copie (Windows) ?",["ctrl","control"],"Ctrl"],
+["Dans l'exemple du PDF, comment nomme-t-on le nouveau bin créé pour récupérer le contenu de Audio.2 ?",["audio new"],"Audio New"],
+["Sous Mac, l'Attic est dans « Macintosh HD/Users/… ». Quel est le nom du dossier qui suit « Users » ?",["shared","users shared"],"Shared"],
+["Sous Windows, dans quel sous-dossier de « Public » l'Attic est-il rangé ? (deux mots)",["public documents"],"Public Documents"],
+["Quel est le nom de la deuxième sauvegarde d'un bin appelé « Source Clips » ?",["source clips.2","source clips 2"],"Source Clips.2"],
+["Dans le dossier Bins d'un projet, il y a un dossier pour chaque … ? (un mot)",["bin","bins","un bin","chaque bin"],"bin"],
+["Avant d'ouvrir l'Attic, que faut-il faire avec l'application Avid ? (un verbe)",["minimiser","reduire","la minimiser","la reduire","minimize"],"Minimiser (réduire)"],
+["Dans la boîte de dialogue Open Bin, vers quel emplacement navigue-t-on pour choisir la sauvegarde copiée ?",["bureau","le bureau","desktop","the desktop"],"Le bureau (Desktop)"],
+["Avid n'autorise pas l'ouverture simultanée d'un bin et de sa … ? (un mot)",["copie","sa copie","une copie"],"copie"],
+["Où glisse-t-on les fichiers de sauvegarde du bureau à la toute fin de la procédure ?",["corbeille","la corbeille","recycle bin","la recycle bin"],"La corbeille (Recycle Bin)"],
+["Cite un des bins visibles à côté d'Audio dans la capture du PDF (Windows).",["clips","graphics","sequences","titles","audio 2","audio.2","1080 5994 bin"],"Clips (ou Graphics, Sequences, Titles)"]
+].forEach(([q,a,d])=>Q.push({s:"Écriture",t:1,q,a,d,e:"Réponse attendue : "+d+"."}));
+const norm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9*.]+/g,' ').trim();
+let list=Q.map((x,i)=>i),cur=0,ans={},foc=0,les=false,perm={};
+function mk(){perm={};Q.forEach((x,i)=>{if(x.t)return;const p=x.o.map((_,k)=>k);for(let n=p.length-1;n>0;n--){const m=Math.floor(Math.random()*(n+1));[p[n],p[m]]=[p[m],p[n]]}perm[i]=p})}
+mk();
+const $=id=>document.getElementById(id);
+const LESSON=`<div class="les"><h2>📖 Leçon : l'Avid Attic</h2>
+<h3>1. C'est quoi l'Attic ?</h3><p>L'Attic (« grenier ») est un dossier où Avid range des copies de sauvegarde de tes bins. Si un bin est corrompu, supprimé par erreur ou écrasé, tu peux y retrouver une version antérieure et récupérer ton travail.</p>
+<h3>2. Où le trouver ?</h3><ul><li><b>Windows :</b> <code>drive:/Users/Public/Public Documents/Avid editing application</code></li><li><b>Mac :</b> <code>Macintosh HD/Users/Shared/Avid editing application/Avid Attic</code></li></ul>
+<h3>3. Comment il est organisé</h3><ol><li>Un dossier <b>par projet</b></li><li>Dans le projet, le dossier <b>Bins</b></li><li>Dans Bins, un dossier <b>par bin</b> (Audio, Clips, Graphics, Sequences, Titles…)</li></ol>
+<h3>4. Les fichiers de sauvegarde</h3><p>Une sauvegarde porte le <b>même nom que le bin avec un numéro ajouté</b> : pour un bin « Source Clips », tu auras <code>Source Clips.1</code>, <code>Source Clips.2</code>… Passe le dossier en <b>View > Details</b> pour voir les dates de création et choisir la bonne version.</p>
+<h3>5. Étape 1 : copier la sauvegarde sur le bureau</h3><ol><li>Minimise ton application Avid.</li><li>Ouvre le dossier Avid Attic depuis le bureau.</li><li>Double-clique le dossier du projet, puis <b>Bins</b>.</li><li>Ouvre le dossier du bin voulu.</li><li>Si besoin : <b>View > Details</b>.</li><li>Sélectionne le ou les fichiers de sauvegarde.</li><li><b>Ctrl+glisse</b> vers le bureau : c'est une <b>copie</b>, les originaux restent dans l'Attic.</li></ol>
+<h3>6. Étape 2 : rouvrir la sauvegarde dans Avid</h3><ol><li>Restaure Avid depuis la barre des tâches.</li><li>Clique sur la fenêtre Projet, puis sur l'onglet <b>Bins</b>.</li><li><b>File > Open Bin</b>.</li><li>Dans « Files of Type », choisis <b>All Files (*.*)</b>.</li><li>Va sur le bureau, sélectionne la sauvegarde et clique <b>Open</b>.</li></ol>
+<div class="note">Un lien vers ce bin est créé dans le dossier <b>Other Bins</b>.</div>
+<h3>6 ter. File > Open Bin : la commande en détail</h3>
+<p><b>Open Bin</b> est la commande du menu <b>File</b> qui sert à ouvrir un bin qui n'est pas déjà dans ton projet, ce qui est le cas d'une sauvegarde copiée sur le bureau. Elle ouvre une fenêtre de navigation comme celle de ton système, dans laquelle tu vas chercher le fichier.</p>
+<ol><li><b>Active la fenêtre Projet</b> (clique dessus) puis l'onglet <b>Bins</b> : c'est de là que la commande agit sur ton projet.</li>
+<li>Va dans le menu <b>File</b> et choisis <b>Open Bin</b>.</li>
+<li>En bas de la fenêtre, dans la liste <b>Files of Type</b>, sélectionne <b>All Files (*.*)</b>. C'est indispensable : le nom d'une sauvegarde se termine par un numéro (Audio.1, Audio.2), donc avec le filtre par défaut tu risques de ne pas la voir.</li>
+<li><b>Navigue jusqu'au bureau</b> et sélectionne la sauvegarde que tu as copiée.</li>
+<li>Clique sur <b>Open</b> : le bin s'ouvre et un lien apparaît dans <b>Other Bins</b>.</li></ol>
+<div class="note"><b>À ne pas confondre :</b> tu n'ouvres pas la sauvegarde en double-cliquant dessus dans l'Attic. Tu passes toujours par File > Open Bin, sur la <b>copie</b> placée sur le bureau, pour ne jamais toucher aux originaux de l'Attic.</div>
+<div class="note"><b>Un bin à la fois :</b> comme Avid refuse d'ouvrir un bin et sa copie en même temps, ferme les autres bins avant d'ouvrir une sauvegarde, et répète File > Open Bin pour chaque sauvegarde, l'une après l'autre.</div>
+<h3>6 bis. Other Bins : à quoi ça sert ?</h3>
+<p><b>Other Bins</b> est un dossier de la fenêtre Projet, dans l'onglet <b>Bins</b>. Il liste les bins que tu ouvres alors qu'ils se trouvent <b>en dehors du dossier de ton projet</b>, ce qui est le cas de tes sauvegardes copiées sur le bureau.</p>
+<ul><li><b>Ce n'est pas une copie :</b> Other Bins ne contient qu'un <b>lien</b> (un raccourci) vers le fichier resté sur le bureau. Le vrai fichier n'est pas déplacé dans ton projet.</li>
+<li><b>Il se crée tout seul :</b> dès que tu ouvres une sauvegarde avec File > Open Bin, Avid ajoute le lien dans Other Bins. Tu n'as rien à faire.</li>
+<li><b>Il permet de les retrouver :</b> tant que le lien est là, tu peux rouvrir la sauvegarde depuis la fenêtre Projet sans retourner la chercher sur le bureau.</li>
+<li><b>Il faut le nettoyer :</b> une fois ton contenu récupéré dans le nouveau bin, supprime les liens de sauvegarde dans Other Bins, sinon ils restent dans ton projet et tu risques de les confondre avec tes vrais bins.</li></ul>
+<div class="note"><b>Attention, deux suppressions distinctes :</b> supprimer le lien dans Other Bins ne supprime pas le fichier du bureau. Il faut ensuite glisser le fichier de sauvegarde du bureau dans la corbeille. Et n'oublie pas la règle d'or : garde ces bins fermés sauf celui que tu utilises.</div>
+<h3>7. Étape 3 : récupérer le contenu</h3><ol><li><b>Crée un nouveau bin</b> (ex. « Audio New » pour récupérer Audio.2).</li><li>Sélectionne ce que tu veux garder dans la sauvegarde et <b>glisse-le</b> dans le nouveau bin.</li><li>Répète l'opération pour chaque autre sauvegarde copiée.</li></ol>
+<div class="note"><b>Règle d'or :</b> Avid ne permet pas d'ouvrir en même temps un bin et sa copie. Garde tous les autres bins fermés et ouvre les sauvegardes <b>une à la fois</b>.</div>
+<h3>8. Nettoyage final</h3><ol><li>Supprime les bins de sauvegarde (les liens) dans le dossier <b>Other Bins</b>.</li><li>Glisse les fichiers de sauvegarde du bureau dans la corbeille.</li></ol>
+<h3>9. À retenir</h3><ul><li>Attic = sauvegardes automatiques, un dossier par projet puis par bin</li><li>Toujours <b>copier</b> (Ctrl+glisse), ne jamais déplacer l'original</li><li>Ouvrir avec <b>File > Open Bin</b> (fenêtre Projet, onglet Bins), filtre <b>All Files (*.*)</b>, sur la copie du <b>bureau</b></li><li><b>Other Bins</b> = les liens vers les bins ouverts hors du projet (tes sauvegardes du bureau), à supprimer à la fin</li><li>Un seul bin de sauvegarde ouvert à la fois, récupérer dans un <b>nouveau bin</b></li></ul>
+<p style="text-align:center"><button class="mbtn p" onclick="toggleLes()">Passer au quiz →</button></p></div>`;
+function toggleLes(){les=!les;$('les').textContent=les?'← Retour au quiz':'📖 Leçon';render();window.scrollTo(0,0)}
+function render(){
+  const card=$('card');
+  if(les){card.innerHTML=LESSON;upd();return}
+  if(cur>=list.length){
+    const ok=Object.values(ans).filter(a=>a.ok).length;const pct=Math.round(ok/list.length*100);
+    const msg=pct>=90?"Excellent, tu maîtrises l'Attic ! 🏆":pct>=60?"Bien joué, encore un petit effort. 👍":"Relis la leçon et retente ta chance. 📖";
+    card.innerHTML=`<div class="end"><div class="big">${ok} / ${list.length}</div><p>${msg}</p><button class="mbtn p" onclick="reset()">Rejouer</button></div>`;upd();return}
+  const x=Q[list[cur]],a=ans[list[cur]];
+  let body;
+  if(x.t){body=`<div class="txt"><input id="ti" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Tape ta réponse…" ${a?`disabled value="${a.txt.replace(/"/g,'&quot;')}" class="${a.ok?'ok':'ko'}"`:''}><button class="mbtn p" style="margin:0" onclick="submitT()" ${a?'disabled':''}>Valider</button></div>`}
+  else body=`<div class="opts">${perm[list[cur]].map((k,i)=>`<button class="opt${a?(k===x.c?' ok':(i===a.pick?' ko':'')):(i===foc?' foc':'')}" ${a?'disabled':''} onclick="pick(${i})"><b>${'ABCDE'[i]}</b><span>${x.o[k]}</span></button>`).join('')}</div>`;
+  card.innerHTML=`<span class="tag">${x.s}</span><div class="qn">Question ${cur+1} / ${list.length}</div><div class="qt">${x.q}</div>${body}${a?`<div class="fb ${a.ok?'g':'b'}">${a.ok?'✓ Bonne réponse !':'✗ Mauvaise réponse'}</div><div class="ex">${x.e}</div>`:''}<div class="nav"><button onclick="go(-1)" ${cur?'':'disabled'}>← Précédent</button><button onclick="go(1)">${cur===list.length-1?'Voir le bilan':'Suivant →'}</button></div>`;
+  if(x.t&&!a)$('ti').focus();
+  upd();
+}
+function upd(){
+  const n=Object.keys(ans).length,ok=Object.values(ans).filter(a=>a.ok).length;
+  $('stat').textContent=`✓ ${ok} / ${n}`;$('pb').style.width=(n/list.length*100)+'%';
+  $('dots').innerHTML=list.map((q,i)=>`<div class="dot${ans[q]?(ans[q].ok?' g':' b'):''}${i===cur&&!les?' cur':''}" onclick="les=false;$('les').textContent='📖 Leçon';cur=${i};foc=0;render()"></div>`).join('');
+}
+function pick(i){const q=list[cur];if(ans[q]||Q[q].t)return;ans[q]={pick:i,ok:perm[q][i]===Q[q].c};render()}
+function submitT(){const q=list[cur],x=Q[q];if(ans[q])return;const v=$('ti').value;if(!norm(v))return;ans[q]={txt:v,ok:x.a.includes(norm(v))};render()}
+function go(d){cur=Math.max(0,Math.min(list.length,cur+d));foc=0;render()}
+function reset(){mk();ans={};cur=0;foc=0;list=Q.map((x,i)=>i);render()}
+$('rst').onclick=reset;$('les').onclick=toggleLes;
+$('shf').onclick=()=>{mk();ans={};cur=0;foc=0;list=Q.map((x,i)=>i).sort(()=>Math.random()-.5);render()};
+$('thm').onclick=()=>{const r=document.documentElement,d=r.dataset.theme==='dark';r.dataset.theme=d?'light':'dark';$('thm').textContent=d?'☀️':'🌙'};
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'){if(e.key==='Enter')submitT();return}
+  if(les){if(e.key==='Escape')toggleLes();return}
+  const q=list[cur],x=Q[q],a=ans[q];
+  if(e.key==='ArrowRight'){go(1);return}
+  if(e.key==='ArrowLeft'){go(-1);return}
+  if(cur>=list.length)return;
+  if(e.key===' '||e.key==='Enter'){e.preventDefault();document.activeElement.blur();if(a)go(1);else if(!x.t)pick(foc);return}
+  if(x.t||a)return;
+  if(e.key==='ArrowDown'){e.preventDefault();foc=(foc+1)%x.o.length;render()}
+  else if(e.key==='ArrowUp'){e.preventDefault();foc=(foc+x.o.length-1)%x.o.length;render()}
+  else{const k='abcde'.indexOf(e.key.toLowerCase());const m='12345'.indexOf(e.key);const v=k>=0?k:m;if(v>=0)pick(v)}
+});
+render();
+</script>
+</body>
+</html>
